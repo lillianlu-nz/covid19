@@ -45,7 +45,7 @@ see locations newly added to the map. Note: this app was not designed for mobile
 
 ui <- bootstrapPage(
     
-    title = "COVID-19 Locations of Interest (10-20 August 2021)",
+    title = "New Zealand COVID-19 Locations of Interest Map",
     #set theme
     theme = shinythemes::shinytheme('simplex'),
     
