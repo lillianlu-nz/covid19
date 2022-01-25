@@ -30,8 +30,7 @@ updatelist = unique(locations$uploadDate)
 text_about <- "This app was recreated using the Ministry of Health data from GitHub: 
 https://github.com/minhealthnz. Use the 'Date Updated On/After' filter to 
 see locations newly added to the map. Locations duplicated or close to each other indicating 
-a higher risk of virus transmission. Note: this app was not designed for mobile; 
-try flipping your phone for a better view. Feel free to provide any feedback or contact me: lillianlu.nz@gmail.com"
+a higher risk of virus transmission. Feel free to provide any feedback or contact me: lillianlu.nz@gmail.com"
 
 
 # BEGIN SERVER ----
@@ -43,25 +42,25 @@ observeEvent(input$show_about, {
     showModal(modalDialog(text_about, title = 'About'))
 })
 
-location_filter <- reactive({
-  if (input$city == 'All') {
-    locations
-    # locations()
-  }
-  else {
-    locations %>%
-      filter(City %in% input$city)
-    # locations() %>%
-    #   filter(City %in% input$city)
-  }
-})
+# location_filter <- reactive({
+#   if (input$city == 'All') {
+#     locations
+#     # locations()
+#   }
+#   else {
+#     locations %>%
+#       filter(City %in% input$city)
+#     # locations() %>%
+#     #   filter(City %in% input$city)
+#   }
+# })
   
   update_filter <- reactive({
     if (input$updatetime == "NA") {
-      location_filter()
+      locations
     }
     else {
-      location_filter() %>%
+      locations %>%
         filter(uploadDate >= input$updatetime)
     }
   })
@@ -128,27 +127,26 @@ ui <- bootstrapPage(
   leaflet::leafletOutput('map', width = '100%', height = '100%'),
   
   # panel on top of output
-  absolutePanel(top = 10, right=10, draggable =T, id = 'controls',
-                
-                selectInput("city", 
-                            "Select City",
-                            choices =  c(citylist, "All"),
-                            selected = "All", multiple = T),
-                
-                sliderInput('time', 'Select Hour Range', 0, 24, c(0, 24)),
-                
-                dateRangeInput(
-                  'date_range', 'Select Date Range', max(updatelist)-15, max(updatelist)
-                ),
-                selectInput("updatetime",
-                            "Data Updated On/After",
-                            choices =  updatelist, selected = max(updatelist)-5),
-                actionButton('show_about', 'About this app')
+  
+  absolutePanel(
+    top = 10, right = 10, style = "z-index:500;",
+    actionButton('show_about', 'About this tool', height = '50%')
+  ),
+  
+  absolutePanel(
+    bottom = 10, right=10, width = 200, height = 250, style = "z-index:500;",
+    sliderInput('time', 'Select Hour Range', 0, 24, c(0, 24)),
+    
+    dateRangeInput(
+      'date_range', 'Select Date Range', max(updatelist)-15, max(updatelist)
+    ),
+    selectInput("updatetime",
+                "Data Updated On/After",
+                choices =  updatelist, selected = max(updatelist)-5)
   ),
   
   tags$style(type = "text/css", "
     html, body {width:100%;height:100%}     
-    #controls{background-color:white;opacity:0.8;padding:20px;}
   ")
 )
 
